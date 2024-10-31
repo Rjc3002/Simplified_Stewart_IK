@@ -24,10 +24,10 @@ class StewartPlatform:
         
     def search_simulation(self,trans,rot):
         print("Starting search")
-        results = np.zeros((1000,4))
+        results = np.zeros((3000,4))
 
-        rvalues = np.arange(0.18, 0.03, -0.01)  #Search space for the radius
-        gvalues = np.arange(60, 10, -10)       #Search space for the gamma
+        rvalues = np.arange(0.18, 0, -0.01)   #Search space for the radius (m)
+        gvalues = np.arange(60, 0, -10)       #Search space for the gamma (deg)
 
         k=0
         found = False
@@ -36,7 +36,7 @@ class StewartPlatform:
             for r2 in rvalues:
                 for g1 in gvalues:
                     for g2 in gvalues:
-                        self.clf = ik(r1,r2,g1,g2,True,height,aMin,aNom,aMax)
+                        self.clf = ik(r1,r2,g1/2.0,g2/2.0,True,height,aMin,aNom,aMax)
                         if self.clf.solve(trans, rot, True): # compute the leg length
                             results[k] = (r1,r2,g1,g2)
                             k = k + 1
