@@ -1,12 +1,18 @@
+from math import sqrt
 import numpy as np
 class inv_kinematics:
-    def __init__(self,radious_base, radious_platform, gamma_base, gamma_platform, height) -> None:
+    def __init__(self,radious_base, radious_platform, gamma_base, gamma_platform, advanced=False, height=0.1, 
+                 actuator_min=0, actuator_nominal=0, actuator_max=0) -> None:
         self.rb = radious_base  # radious of the base
         self.rp = radious_platform  # radious of the platform
         self.gamma_B = np.deg2rad(gamma_base)  # half of the angle of the base
         self.gamma_P = np.deg2rad(gamma_platform)  # half of the angle of the platform
-        # # Definition of the platform home position.
-        self.home_pos= np.array([0, 0, height])         # home position of the platform, z-axis offset = perpendicular height
+        self.aNom = actuator_nominal
+        self.aMin = actuator_min
+        self.aMax = actuator_max
+        self.height = height
+        self.advanced = advanced
+        
         self.B = None
         self.P = None
         self.L = None
@@ -47,6 +53,8 @@ class inv_kinematics:
             [ np.cos(phi_B[3]), np.sin(phi_B[3]), 0],
             [ np.cos(phi_B[4]), np.sin(phi_B[4]), 0],
             [ np.cos(phi_B[5]), np.sin(phi_B[5]), 0] ])
+        Bx = B[0][0]
+        By = B[0][1]
         B = np.transpose(B)
             
         # Coordinates of the points where the rods 
@@ -58,8 +66,18 @@ class inv_kinematics:
             [ np.cos(phi_P[3]),  np.sin(phi_P[3]), 0],
             [ np.cos(phi_P[4]),  np.sin(phi_P[4]), 0],
             [ np.cos(phi_P[5]),  np.sin(phi_P[5]), 0] ])
+        Px = P[0][0]
+        Py = P[0][1]
         P = np.transpose(P)
-        return B,P
+
+        try:
+            H = sqrt((self.aNom)**2 - ((Px-Bx)**2 + (Py-By)**2)) #Calculate height of the platform
+        except ValueError:
+            H = -1
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+        
+        return B,P,H
 
     # Rotation matrices for X, Y, Z axis
     def rotX(self, theta):
@@ -86,12 +104,24 @@ class inv_kinematics:
             [   0        ,     0      , 1 ] ])   
         return rotz
     
-    def solve(self, trans, rotation):
+    def solve(self, trans, rotation, searching=False):
         # Allocate for variables
         l = np.zeros((3,6))
         lll = np.zeros((6))
         # Calculate the coordinate point of base and platform
-        self.B, self.P = self.frame()
+        self.B, self.P, self.H = self.frame()
+
+        if(self.advanced):
+            if not searching:
+                print("Calculated neutral height (m): ",self.H)
+            self.height = self.H
+
+        if(self.height == -1):
+            if not searching:
+                print("Height calculation failed, please check the actuator lengths")
+            return False
+
+        self.home_pos= np.array([0, 0, self.height])         # home position of the platform, z-axis offset = perpendicular height
 
         # Get rotation matrix of platform. RotZ* RotY * RotX -> matmul
         # R = np.matmul( np.matmul(self.rotZ(rotation[2]), self.rotY(rotation[1])), self.rotX(rotation[0]) )
@@ -102,8 +132,19 @@ class inv_kinematics:
         l = np.repeat(trans[:, np.newaxis], 6, axis=1) + np.repeat(self.home_pos[:, np.newaxis], 6, axis=1) + np.matmul(R, self.P) - self.B 
         lll = np.linalg.norm(l, axis=0)
 
+        minl = np.min(lll)
+        maxl = np.max(lll)
+
+        if(minl < self.aMin or maxl > self.aMax):
+            if searching:
+                return False
+            else:
+                print("Out of bounds!")
+
         # Position of leg in global frame
-        self.L = l + self.B
-       # new_list = [(i, L) for i, L in enumerate(lll)]
+        # self.L = l + self.B
+        # new_list = [(i, L) for i, L in enumerate(lll)]
         #print("leg lengths",new_list)
+        if searching:
+            return True
         return lll

@@ -18,8 +18,9 @@ import numpy as np
 """
 
 # Set Hexapod Constants
-design_variables = [MSD_Hexapod_Simplified.RP, MSD_Hexapod_Simplified.RB, MSD_Hexapod_Simplified.GP, 
-                    MSD_Hexapod_Simplified.GB, MSD_Hexapod_Simplified.H]
+design_variables = [MSD_Hexapod_Simplified.RB, MSD_Hexapod_Simplified.RP, MSD_Hexapod_Simplified.GB, 
+                    MSD_Hexapod_Simplified.GP,MSD_Hexapod_Simplified.AdvancedMode, MSD_Hexapod_Simplified.H, 
+                    MSD_Hexapod_Simplified.Actuator_Min, MSD_Hexapod_Simplified.Actuator_Neutral, MSD_Hexapod_Simplified.Actuator_Max]
 
 # Create translation
 trans = np.array([MSD_Hexapod_Simplified.dX, MSD_Hexapod_Simplified.dY, MSD_Hexapod_Simplified.dZ]) 
@@ -35,5 +36,5 @@ data = [[trans, rot1]]
 clf = sp(design_variables)
 
 if __name__ == '__main__':
-        clf.start_simmulation(data) # Calculate Actuator lengths
+        clf.start_simmulation(data,MSD_Hexapod_Simplified.SearchMode) # Calculate Actuator lengths
         
