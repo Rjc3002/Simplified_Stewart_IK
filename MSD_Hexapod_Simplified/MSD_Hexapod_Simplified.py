@@ -6,6 +6,12 @@ GP, GB = 30/2, 30/2       # degrees, polar angle between adjacent mounting point
                           # Pairs of mounts are evenly spaced on a triangle
 H = 0.1                   # meters, height of the platform (z-axis) relative to base
 
+                          # Can probably modify such that Height is calculated based on GP & GB
+                          #    and the neutral length of a specific linear actuator, using
+                          #    the right triangle of the mounting points projected down to get the hypotenuse
+                          #    and then solve for H using that hypotenuse and the actuator length?
+                          # Would also be easy to add constraints for min/max actuator stroke.
+
 
 
 # Define the operation to perform
