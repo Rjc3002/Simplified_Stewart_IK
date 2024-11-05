@@ -142,8 +142,8 @@ class inv_kinematics:
                 print("Out of bounds!")
 
         # Position of leg in global frame
-        # self.L = l + self.B
-        # new_list = [(i, L) for i, L in enumerate(lll)]
+        self.L = l + self.B
+        new_list = [(i, L) for i, L in enumerate(lll)]
         #print("leg lengths",new_list)
         if searching:
             return True

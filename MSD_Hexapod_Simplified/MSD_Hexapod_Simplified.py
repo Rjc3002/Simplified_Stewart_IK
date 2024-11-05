@@ -10,22 +10,36 @@ H = 0.1                   # meters, height of the platform (z-axis) relative to 
 AdvancedMode=True         # If True, will perform calculations for the height of the platform based on the neutral length of the actuator
                           # And will check for out of bounds motions using the actuator limits
 
-SearchMode=False           # If True, will perform a search for the useable configurations of the stewart platform given the actuator limits
+SearchMode=False          # If True, will perform a search for the useable configurations of the stewart platform given the actuator limits
 
 # Define Linear Actuator Specifications, Unused when AdvancedMode=False
 # For CLA2201 Without COE
 # https://www.jpe-innovations.com/wp-content/uploads/CLA2201_Datasheet.pdf
+#Actuator_Min = 0.0376
+#Actuator_Neutral = 0.0436
+#Actuator_Max = 0.0496
+#RB, RP = 0.08, 0.04
+#GB, GP = 50/2, 50/2
+
+#Chosen Configuration
 Actuator_Min = 0.0376
-Actuator_Neutral = 0.0436
+Actuator_Neutral = 0.0426
 Actuator_Max = 0.0496
-RB, RP = 0.08, 0.04
-GB, GP = 50/2, 50/2
+RB, RP = 0.045, 0.0425
+GB, GP = 10/2, 10/2
+
+#Actuator_Min = 0.0406
+#Actuator_Neutral = 0.0436
+#Actuator_Max = 0.0466
+#RB, RP = 0.070, 0.030
+#GB, GP = 60/2, 20/2
+
 
 # For CVCA1     -> Only passes search with small radii
 # https://www.jpe-innovations.com/wp-content/uploads/CVCA1_Datasheet.pdf
-#Actuator_Min = 0.0275
+#Actuator_Min = 0.027
 #Actuator_Neutral = 0.030
-#Actuator_Max = 0.0335
+#Actuator_Max = 0.033
 #RB, RP = 0.04, 0.02
 #GB, GP = 30/2, 30/2
 
@@ -46,6 +60,6 @@ dY = 0;
 dZ = 0;
 
 #   Rotation of Platform (degrees)
-dRoll = 10;
-dPitch = 10;
+dRoll = 11;
+dPitch = 11;
 dYaw = 0; # Twist

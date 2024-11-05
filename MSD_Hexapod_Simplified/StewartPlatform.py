@@ -26,7 +26,7 @@ class StewartPlatform:
         print("Starting search")
         results = np.zeros((3000,4))
 
-        rvalues = np.arange(0.18, 0, -0.01)   #Search space for the radius (m)
+        rvalues = np.arange(0.05, 0, -0.01)   #Search space for the radius (m)
         gvalues = np.arange(60, 0, -10)       #Search space for the gamma (deg)
 
         k=0
